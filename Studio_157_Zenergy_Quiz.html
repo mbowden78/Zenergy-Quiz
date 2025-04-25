@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio 157 Zenergy Quiz</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom right, #e0c3fc, #8ec5fc);
+      color: #333;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      border-radius: 15px;
+    }
+    h1 {
+      text-align: center;
+      color: #6a0dad;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+    }
+    .result {
+      display: none;
+      margin-top: 2rem;
+      padding: 1rem;
+      border-radius: 10px;
+      background-color: #fff7e6;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    button {
+      background-color: #6a0dad;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: block;
+      margin: 2rem auto;
+    }
+    input[type="text"], select {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ Studio 157 Zenergy Quiz ✨</h1>
+  <form id="zenergyForm">
+    <label for="studentName"><strong>Your Name:</strong></label>
+    <input type="text" id="studentName" name="studentName" placeholder="Enter your name here" required />
+
+    <label for="classPeriod"><strong>Class Period:</strong></label>
+    <select id="classPeriod" name="classPeriod" required>
+      <option value="">-- Select your class period --</option>
+      <option value="A1">A1</option>
+      <option value="A2">A2</option>
+      <option value="A3">A3</option>
+      <option value="A4">A4</option>
+      <option value="B1">B1</option>
+      <option value="B2">B2</option>
+      <option value="B3">B3</option>
+      <option value="B4">B4</option>
+    </select>
+
+    <!-- Question Inputs (omitted for brevity, already present in user textdoc) -->
+
+    <button type="button" onclick="calculateResult()">Reveal My Zenergy</button>
+  </form>
+
+  <div id="result" class="result"></div>
+
+  <script>
+    function calculateResult() {
+      const form = document.forms["zenergyForm"];
+      const studentName = form["studentName"].value;
+      const classPeriod = form["classPeriod"].value;
+      const scores = { chaos: 0, curiosity: 0, clarity: 0, conviction: 0 };
+
+      for (let q = 1; q <= 6; q++) {
+        const qElement = form["q" + q];
+        if (qElement && qElement.value && scores.hasOwnProperty(qElement.value)) {
+          scores[qElement.value]++;
+        }
+      }
+
+      let topTrait = "";
+      let maxScore = -1;
+
+      for (const trait in scores) {
+        if (scores[trait] > maxScore) {
+          topTrait = trait;
+          maxScore = scores[trait];
+        }
+      }
+
+      const descriptions = {
+        chaos: "🌀 <strong>Chaos Mode:</strong> You are the spark, the glitter cannon of learning. Channel that energy wisely!",
+        curiosity: "🔍 <strong>Curiosity Mode:</strong> Questions are your superpower. Just don’t fall into the rabbit hole forever!",
+        clarity: "🎯 <strong>Clarity Mode:</strong> Focused, precise, and sharp—like a laser pointer aimed at success.",
+        conviction: "🔥 <strong>Conviction Mode:</strong> Driven and purposeful, you charge forward with fire in your soul!"
+      };
+
+      const resultMessage = descriptions[topTrait] +
+        "<br><br>✨ <em>To find Zenergy:</em> Balance your strengths with a little of the other three. You’re not just one spark—you’re the whole constellation.";
+
+      document.getElementById("result").innerHTML =
+        `<strong>Name:</strong> ${studentName}<br><strong>Class Period:</strong> ${classPeriod}<br><strong>Zenergy Mode:</strong> ${topTrait}<br><br>${resultMessage}`;
+      document.getElementById("result").style.display = "block";
+
+      const payload = JSON.stringify({
+        name: studentName,
+        classPeriod: classPeriod,
+        chaos: scores.chaos,
+        curiosity: scores.curiosity,
+        clarity: scores.clarity,
+        conviction: scores.conviction,
+        topTrait: topTrait
+      });
+
+      fetch("https://script.google.com/macros/s/AKfycby229UfzvNiBtgISYN5MpFExqoKqG0CEk6RzsV5ez_fPiUEVM7xcqoLvO1Fu6f5dDRx/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: payload
+      });
+    }
+  </script>
+</body>
+</html>
